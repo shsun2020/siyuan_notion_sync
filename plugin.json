@@ -16,7 +16,7 @@
         "default": "README.md",
         "zh_CN": "README_zh_CN.md"
     },
-    "minAppVersion": "2.8.5",
+    "minAppVersion": "3.0.0",
     "category": "tool",
     "keywords": ["notion", "sync", "export", "integration"],
     "backends": ["all"],

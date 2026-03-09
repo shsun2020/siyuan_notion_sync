@@ -81,48 +81,60 @@ module.exports = class SiYuanNotionSyncPlugin extends Plugin {
     }
 
     async onload() {
-        // 获取前端类型：手机还是PC
-        const frontEnd = getFrontend();
-        this.isMobile = frontEnd === "mobile" || frontEnd === "browser-mobile";
+        try {
+            console.log("[SiYuan Notion Sync] onload called");
 
-        // Get plugin data path
-        this.dataPath = this.path;
-        this.configPath = path.join(this.dataPath, "conf", "config.json");
+            // 获取前端类型：手机还是PC
+            const frontEnd = getFrontend();
+            this.isMobile = frontEnd === "mobile" || frontEnd === "browser-mobile";
 
-        // Ensure directories exist
-        const confDir = path.join(this.dataPath, "conf");
-        if (!fs.existsSync(confDir)) {
-            fs.mkdirSync(confDir, { recursive: true });
-        }
+            // Get plugin data path
+            this.dataPath = this.path;
+            this.configPath = path.join(this.dataPath, "conf", "config.json");
+            console.log("[SiYuan Notion Sync] dataPath:", this.dataPath);
 
-        // Load configuration
-        this.loadConfig();
-
-        // Initialize modules
-        this.siyuanClient = new SiYuanClient(this.app);
-        this.transformer = new Transformer();
-        this.notion = new NotionClient(this.config.notionApiKey);
-        this.ui = new PluginUI(this);
-
-        // 添加命令 - 在命令面板中可用
-        this.addCommand({
-            label: this.i18n.sync.title,
-            lang: this.i18n.plugin.name,
-            langChecked: this.i18n.plugin.name,
-            click: () => {
-                this.ui.showMainPanel();
+            // Ensure directories exist
+            const confDir = path.join(this.dataPath, "conf");
+            if (!fs.existsSync(confDir)) {
+                fs.mkdirSync(confDir, { recursive: true });
             }
-        });
 
-        // 尝试添加工具栏图标
-        this.tryAddToolbarIcon();
+            // Load configuration
+            this.loadConfig();
 
-        console.log("[SiYuan Notion Sync] Plugin loaded");
+            // Initialize modules
+            this.siyuanClient = new SiYuanClient(this.app);
+            this.transformer = new Transformer();
+            this.notion = new NotionClient(this.config.notionApiKey);
+            this.ui = new PluginUI(this);
+
+            // 添加命令 - 在命令面板中可用
+            this.addCommand({
+                label: this.i18n.sync.title,
+                lang: this.i18n.plugin.name,
+                langChecked: this.i18n.plugin.name,
+                click: () => {
+                    this.ui.showMainPanel();
+                }
+            });
+
+            // 尝试添加工具栏图标
+            this.tryAddToolbarIcon();
+
+            console.log("[SiYuan Notion Sync] Plugin loaded");
+        } catch (e) {
+            console.error("[SiYuan Notion Sync] Error in onload:", e);
+        }
     }
 
     // 点击插件图标时打开设置面板
     openConfig() {
-        this.ui.showMainPanel();
+        console.log("[SiYuan Notion Sync] openConfig called");
+        if (this.ui) {
+            this.ui.showMainPanel();
+        } else {
+            console.error("[SiYuan Notion Sync] UI not initialized");
+        }
     }
 
     tryAddToolbarIcon() {
