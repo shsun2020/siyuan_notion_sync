@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local config (contains sensitive data)
+conf/config.json
+
+# Claude settings
+.claude/
+
+# Temp files
+*.jpg
+*.jpeg
+*.png.bak

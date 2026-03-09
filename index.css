@@ -1,0 +1,101 @@
+/* SiYuan Notion Sync Plugin Styles */
+
+.siyuan-notion-sync-panel {
+    padding: 16px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.siyuan-notion-sync-panel h3 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.siyuan-notion-sync-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.siyuan-notion-sync-form label {
+    display: block;
+    margin-bottom: 4px;
+    font-size: 13px;
+    color: var(--b3-theme-on-surface);
+}
+
+.siyuan-notion-sync-form input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid var(--b3-theme-surface-outline);
+    border-radius: 4px;
+    background: var(--b3-theme-background);
+    color: var(--b3-theme-on-surface);
+    font-size: 13px;
+}
+
+.siyuan-notion-sync-form input:focus {
+    outline: none;
+    border-color: var(--b3-theme-primary);
+}
+
+.siyuan-notion-sync-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.siyuan-notion-sync-buttons button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.2s;
+}
+
+.siyuan-notion-sync-buttons .btn-primary {
+    background: var(--b3-theme-primary);
+    color: var(--b3-theme-on-primary);
+}
+
+.siyuan-notion-sync-buttons .btn-primary:hover {
+    background: var(--b3-theme-primary-light);
+}
+
+.siyuan-notion-sync-buttons .btn-secondary {
+    background: var(--b3-theme-surface);
+    color: var(--b3-theme-on-surface);
+    border: 1px solid var(--b3-theme-surface-outline);
+}
+
+.siyuan-notion-sync-buttons .btn-secondary:hover {
+    background: var(--b3-theme-surface-hover);
+}
+
+.siyuan-notion-sync-status {
+    margin-top: 16px;
+    padding: 12px;
+    background: var(--b3-theme-background);
+    border-radius: 4px;
+    font-size: 13px;
+}
+
+.siyuan-notion-sync-status .status-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.siyuan-notion-sync-log {
+    margin-top: 12px;
+    padding: 12px;
+    background: var(--b3-theme-surface);
+    border-radius: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    font-family: monospace;
+    font-size: 12px;
+    white-space: pre-wrap;
+    word-break: break-all;
+}

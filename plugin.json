@@ -1,0 +1,24 @@
+{
+    "name": "siyuan-notion-sync",
+    "version": "1.0.0",
+    "author": "SiYuan User",
+    "url": "https://github.com/siyuan-notion-sync/siyuan-notion-sync",
+    "icon": "siyuan_notion_sync.png",
+    "displayName": {
+        "default": "SiYuan Notion Sync",
+        "zh_CN": "SiYuan Notion 同步"
+    },
+    "description": {
+        "default": "Sync SiYuan notes to Notion",
+        "zh_CN": "将SiYuan笔记单向同步到Notion"
+    },
+    "readme": {
+        "default": "README.md",
+        "zh_CN": "README_zh_CN.md"
+    },
+    "minAppVersion": "2.8.5",
+    "category": "tool",
+    "keywords": ["notion", "sync", "export", "integration"],
+    "backends": ["all"],
+    "frontends": ["all"]
+}
