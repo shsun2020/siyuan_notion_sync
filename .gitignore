@@ -44,4 +44,9 @@ resize-icon.js
 *.key
 
 # Release (build locally, upload to GitHub Release manually)
-# release/
+release/
+
+# GitHub cookies/tokens (sensitive)
+github_cookies.txt
+*cookies*
+*.txt.bak
