@@ -1,12 +1,28 @@
 {
   "name": "siyuan-notion-sync",
   "version": "1.0.0",
-  "description": "Sync SiYuan notes to Notion",
+  "description": "A SiYuan plugin that synchronizes notes from SiYuan to Notion",
   "main": "index.js",
   "author": "SiYuan User",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/shsun2020/siyuan_notion_sync.git"
+  },
+  "homepage": "https://github.com/shsun2020/siyuan_notion_sync#readme",
+  "keywords": [
+    "siyuan",
+    "notion",
+    "sync",
+    "plugin",
+    "integration"
+  ],
+  "engines": {
+    "siyuan": ">=3.0.0"
+  },
   "scripts": {
-    "build": "node build.js"
+    "build": "node build.js",
+    "dev": "node build.js --watch"
   },
   "devDependencies": {
     "archiver": "^6.0.0"

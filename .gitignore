@@ -3,7 +3,6 @@ node_modules/
 
 # Build output
 dist/
-release/
 
 # IDE
 .idea/
@@ -29,5 +28,20 @@ conf/config.json
 *.jpg
 *.jpeg
 *.png.bak
-*.ps1
 *.js.bak
+
+# PowerShell scripts (dev only)
+*.ps1
+
+# Build scripts (dev only)
+build.js
+build.ps1
+resize.ps1
+resize-icon.js
+
+# GitHub tokens (never commit)
+*token*
+*.key
+
+# Release (build locally, upload to GitHub Release manually)
+# release/

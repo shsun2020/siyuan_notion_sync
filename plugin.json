@@ -1,8 +1,8 @@
 {
     "name": "siyuan-notion-sync",
     "version": "1.0.0",
-    "author": "SiYuan User",
-    "url": "https://github.com/siyuan-notion-sync/siyuan-notion-sync",
+    "author": "shsun",
+    "url": "https://github.com/shsun2020/siyuan_notion_sync",
     "icon": "icon.png",
     "displayName": {
         "default": "SiYuan Notion Sync",
@@ -20,5 +20,7 @@
     "category": "tool",
     "keywords": ["notion", "sync", "export", "integration"],
     "backends": ["all"],
-    "frontends": ["all"]
+    "frontends": ["all"],
+    "repository": "https://github.com/shsun2020/siyuan_notion_sync",
+    "bugs": "https://github.com/shsun2020/siyuan_notion_sync/issues"
 }

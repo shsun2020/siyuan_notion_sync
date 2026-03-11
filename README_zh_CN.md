@@ -141,3 +141,78 @@ A: 这是正常的，Notion API 有限速，插件已设置 350ms 延迟
 
 **Q: 能同步图片吗？**
 A: 可以，但图片必须是外部 URL（如图床链接），本地图片无法同步
+
+## 项目结构
+
+```
+siyuan-notion-sync/
+├── index.js          # 插件主入口
+├── plugin.json       # 插件配置
+├── icon.png          # 插件图标 (160x160)
+├── index.css         # 样式文件
+├── conf/
+│   └── config.json   # 用户配置（存储在插件目录）
+├── src/
+│   ├── siyuan.js     # SiYuan API 客户端
+│   ├── notion.js     # Notion API 客户端
+│   ├── transformer.js# 格式转换器（SiYuan → Notion）
+│   └── ui.js         # 插件界面
+└── release/
+    └── package.zip   # 分发包
+```
+
+## 开发指南
+
+### 前置要求
+
+- Node.js 18+
+- pnpm（推荐）或 npm
+
+### 本地开发
+
+```bash
+# 1. 克隆仓库
+git clone https://github.com/shsun2020/siyuan_notion_sync.git
+cd siyuan_notion_sync
+
+# 2. 安装依赖
+pnpm install
+
+# 3. 构建插件包
+pnpm run build
+
+# 4. 打包后的文件在 release/package.zip
+```
+
+### 发布到 SiYuan 集市
+
+1. 创建 GitHub Release，添加语义化版本标签（如 v1.0.0）
+2. 将 `release/package.zip` 作为二进制附件上传
+3. 向 [siyuan-note/bazaar](https://github.com/siyuan-note/bazaar) 提交 Pull Request
+4. 在 `plugins.txt` 中添加 `shsun2020/siyuan_notion_sync`
+
+## 支持的 SiYuan 块类型
+
+| SiYuan 块 | Notion 块 |
+|-----------|-----------|
+| h1-h6 | heading_1-3 |
+| p | paragraph |
+| code | code |
+| ul/li | bulleted_list_item |
+| ol | numbered_list_item |
+| task | to_do |
+| table | table |
+| blockquote | quote |
+| hr | divider |
+| img | image |
+| bookmark | bookmark |
+
+## 许可证
+
+MIT
+
+## 相关链接
+
+- GitHub: https://github.com/shsun2020/siyuan_notion_sync
+- Notion API 文档: https://developers.notion.com/
+- SiYuan 插件开发: https://ld246.com/guide/plugin/
