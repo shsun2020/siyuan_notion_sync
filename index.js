@@ -401,7 +401,7 @@ module.exports = class SiYuanNotionSyncPlugin extends Plugin {
         // Add ribbon button - opens the main panel
         const btn = document.createElement("div");
         btn.className = "toolbar__icon siyuan-notion-sync-icon";
-        btn.style.backgroundImage = `url("./plugins/siyuan-notion-sync/siyuan_notion_sync.png")`;
+        btn.style.backgroundImage = `url("./plugins/siyuan-notion-sync/icon.png")`;
         btn.style.backgroundSize = "24px";
         btn.style.backgroundRepeat = "no-repeat";
         btn.style.backgroundPosition = "center";
