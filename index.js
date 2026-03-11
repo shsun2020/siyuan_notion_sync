@@ -78,6 +78,7 @@ module.exports = class SiYuanNotionSyncPlugin extends Plugin {
         this.notion = null;
         this.transformer = null;
         this.ui = null;
+        this.currentTabElement = null;  // 当前打开的Tab元素
     }
 
     async onload() {
@@ -108,13 +109,28 @@ module.exports = class SiYuanNotionSyncPlugin extends Plugin {
             this.notion = new NotionClient(this.config.notionApiKey);
             this.ui = new PluginUI(this);
 
+            // 添加设置面板 Tab
+            this.addTab({
+                type: "siyuan-notion-sync-settings",
+                name: "siyuan-notion-sync",
+                i18n: "plugin.name",
+                // 创建面板的 DOM
+                obj: {
+                    display: (element) => {
+                        this.currentTabElement = element;
+                        element.innerHTML = this.getSettingsHTML();
+                        this.bindSettingsEvents(element);
+                    }
+                }
+            });
+
             // 添加命令 - 在命令面板中可用
             this.addCommand({
                 label: this.i18n.sync.title,
                 lang: this.i18n.plugin.name,
                 langChecked: this.i18n.plugin.name,
                 click: () => {
-                    this.ui.showMainPanel();
+                    this.openConfig();
                 }
             });
 
@@ -130,6 +146,7 @@ module.exports = class SiYuanNotionSyncPlugin extends Plugin {
     // 点击插件图标时打开设置面板
     openConfig() {
         console.log("[SiYuan Notion Sync] openConfig called");
+        // 使用原有的modal方式打开面板（更可靠）
         if (this.ui) {
             this.ui.showMainPanel();
         } else {
@@ -137,9 +154,196 @@ module.exports = class SiYuanNotionSyncPlugin extends Plugin {
         }
     }
 
+    /**
+     * 获取设置面板 HTML - 包含设置和同步功能
+     */
+    getSettingsHTML() {
+        const config = this.config;
+        const lastSync = config.lastSyncTime
+            ? new Date(config.lastSyncTime).toLocaleString()
+            : this.i18n.sync.never;
+
+        const statusText = this.getStatusText(config.syncStatus);
+
+        let logHtml = "";
+        if (config.syncLog && config.syncLog.length > 0) {
+            logHtml = config.syncLog.map(log => '<div class="sync-log-item">' + log + '</div>').join("");
+        }
+
+        return `
+            <div class="siyuan-notion-sync-panel">
+                <h3>${this.i18n.settings.title}</h3>
+                <div class="siyuan-notion-sync-form">
+                    <div class="b3-form__group">
+                        <label class="b3-form__label">${this.i18n.settings.apiKey}</label>
+                        <input type="password" class="b3-text-field fn__block"
+                            id="notion-api-key" placeholder="secret_xxx..."
+                            value="${config.notionApiKey || ''}">
+                    </div>
+                    <div class="b3-form__group">
+                        <label class="b3-form__label">${this.i18n.settings.parentPage}</label>
+                        <input type="text" class="b3-text-field fn__block"
+                            id="notion-parent-page" placeholder="32位页面ID，留空则创建新页面"
+                            value="${config.notionParentPageId || ''}">
+                    </div>
+                    <div class="siyuan-notion-sync-buttons">
+                        <button class="b3-button b3-button--outline" id="test-connection">
+                            ${this.i18n.settings.testConnection}
+                        </button>
+                        <button class="b3-button b3-button--success" id="save-config">
+                            ${this.i18n.settings.save}
+                        </button>
+                        <span id="connection-result" style="margin-left: 12px; line-height: 32px;"></span>
+                    </div>
+                </div>
+
+                <!-- 同步区域 -->
+                <div class="sync-section" style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--b3-theme-surface-hover);">
+                    <div class="fn__flex" style="justify-content: space-between; margin-bottom: 12px;">
+                        <span>${this.i18n.sync.lastSync}: ${lastSync}</span>
+                        <span id="sync-status-text">${statusText}</span>
+                    </div>
+                    <div class="progress-container" id="sync-progress-container" style="display: ${config.syncStatus === 'running' ? 'flex' : 'none'}; margin-bottom: 12px;">
+                        <div class="b3-progress b3-progress--inline" style="flex: 1;">
+                            <div class="b3-progress__bar" id="sync-progress-bar" style="width: ${config.syncProgress}%;"></div>
+                        </div>
+                        <span id="sync-progress-text" style="margin-left: 12px;">${config.syncProgress}%</span>
+                    </div>
+                    <div class="sync-log" id="sync-log" style="max-height: 150px; overflow-y: auto; padding: 8px; background: var(--b3-theme-surface); border-radius: 4px; font-size: 12px; margin-bottom: 12px;">
+                        ${logHtml}
+                    </div>
+                    <button class="b3-button b3-button--success fn__block" id="start-sync" ${config.syncStatus === 'running' ? 'disabled' : ''}>
+                        ${this.i18n.sync.start}
+                    </button>
+                </div>
+            </div>
+        `;
+    }
+
+    /**
+     * 获取状态文本
+     */
+    getStatusText(status) {
+        const statusMap = {
+            "idle": this.i18n.sync.statusIdle,
+            "running": this.i18n.sync.statusRunning,
+            "completed": this.i18n.sync.statusCompleted,
+            "error": this.i18n.sync.statusError
+        };
+        return statusMap[status] || "Unknown";
+    }
+
+    /**
+     * 绑定设置面板事件
+     */
+    bindSettingsEvents(element) {
+        const self = this;
+
+        // 测试连接
+        const testBtn = element.querySelector("#test-connection");
+        if (testBtn) {
+            testBtn.onclick = async () => {
+                const apiKey = element.querySelector("#notion-api-key").value.trim();
+                const parentPage = element.querySelector("#notion-parent-page").value.trim();
+                const resultEl = element.querySelector("#connection-result");
+
+                resultEl.textContent = "Testing...";
+                resultEl.style.color = "#666";
+
+                const tempNotion = new NotionClient(apiKey);
+                const result = await tempNotion.testConnection(parentPage);
+
+                if (result.success) {
+                    resultEl.textContent = "OK";
+                    resultEl.style.color = "green";
+                } else {
+                    resultEl.textContent = result.message;
+                    resultEl.style.color = "red";
+                }
+            };
+        }
+
+        // 保存配置
+        const saveBtn = element.querySelector("#save-config");
+        if (saveBtn) {
+            saveBtn.onclick = () => {
+                const apiKey = element.querySelector("#notion-api-key").value.trim();
+                const parentPage = element.querySelector("#notion-parent-page").value.trim();
+
+                self.updateConfig({
+                    notionApiKey: apiKey,
+                    notionParentPageId: parentPage
+                });
+
+                const resultEl = element.querySelector("#connection-result");
+                resultEl.textContent = self.i18n.sync.success;
+                resultEl.style.color = "green";
+            };
+        }
+
+        // 开始同步
+        const startSyncBtn = element.querySelector("#start-sync");
+        if (startSyncBtn) {
+            startSyncBtn.onclick = async () => {
+                await self.startSync();
+                // 刷新面板状态
+                self.updateTabPanel(element);
+            };
+        }
+    }
+
+    /**
+     * 更新Tab面板状态（同步进度等）
+     */
+    updateTabPanel(element) {
+        if (!element) return;
+
+        const config = this.config;
+
+        // 状态文本
+        const statusText = element.querySelector("#sync-status-text");
+        if (statusText) {
+            statusText.textContent = this.getStatusText(config.syncStatus);
+        }
+
+        // 进度条
+        const progressContainer = element.querySelector("#sync-progress-container");
+        const progressBar = element.querySelector("#sync-progress-bar");
+        const progressText = element.querySelector("#sync-progress-text");
+
+        if (config.syncStatus === "running") {
+            progressContainer.style.display = "flex";
+            progressBar.style.width = config.syncProgress + "%";
+            progressText.textContent = config.syncProgress + "%";
+        } else {
+            progressContainer.style.display = "none";
+        }
+
+        // 日志
+        const syncLogEl = element.querySelector("#sync-log");
+        if (syncLogEl && config.syncLog) {
+            syncLogEl.innerHTML = config.syncLog.map(log => '<div class="sync-log-item">' + log + '</div>').join("");
+            syncLogEl.scrollTop = syncLogEl.scrollHeight;
+        }
+
+        // 同步按钮
+        const startBtn = element.querySelector("#start-sync");
+        if (startBtn) {
+            startBtn.disabled = config.syncStatus === "running";
+        }
+    }
+
     tryAddToolbarIcon() {
-        // 尝试多种选择器来查找工具栏
-        const selectors = ["#toolbar", ".toolbar", "#topbar", ".top-bar", ".fn__flex.toolbar"];
+        // 尝试多种选择器来查找工具栏（兼容不同版本的 SiYuan）
+        const selectors = [
+            ".fn__toolbar",           // 新版 SiYuan
+            "#toolbar",               // 旧版
+            ".toolbar",               // 备用
+            "#topbar",                // 备用
+            ".top-bar",               // 备用
+            ".fn__flex-1",            // 另一版本
+            ".toolbar__icon"          // 工具栏图标容器
+        ];
         let attempts = 0;
         const maxAttempts = 30;
 
@@ -205,7 +409,7 @@ module.exports = class SiYuanNotionSyncPlugin extends Plugin {
         btn.style.height = "28px";
         btn.style.cursor = "pointer";
         btn.title = "SiYuan Notion Sync";
-        btn.onclick = () => this.ui.showMainPanel();
+        btn.onclick = () => this.openConfig();
 
         toolbar.appendChild(btn);
         console.log("[SiYuan Notion Sync] Toolbar icon added");
@@ -274,6 +478,7 @@ module.exports = class SiYuanNotionSyncPlugin extends Plugin {
         this.config.syncLog = [];
         this.saveConfig();
         this.ui.updateSyncStatus();
+        this.updateTabPanel(this.currentTabElement);
 
         try {
             this.log(this.i18n.sync.started);
@@ -312,6 +517,7 @@ module.exports = class SiYuanNotionSyncPlugin extends Plugin {
                             this.config.syncProgress = Math.round(((n * 100 + (i + 1) * 100 / documents.length) / notebooks.length));
                             this.saveConfig();
                             this.ui.updateSyncStatus();
+                            this.updateTabPanel(this.currentTabElement);
 
                             await this.delay(350);
                         } catch (e) {
@@ -329,6 +535,7 @@ module.exports = class SiYuanNotionSyncPlugin extends Plugin {
             this.config.syncStatus = "completed";
             this.saveConfig();
             this.ui.updateSyncStatus();
+            this.updateTabPanel(this.currentTabElement);
 
             this.log(this.i18n.sync.complete.replace("{success}", successCount).replace("{failed}", failCount));
             return { success: true, message: "Success: " + successCount + ", Failed: " + failCount };
@@ -337,6 +544,7 @@ module.exports = class SiYuanNotionSyncPlugin extends Plugin {
             this.config.syncLog.push("Error: " + e.message);
             this.saveConfig();
             this.ui.updateSyncStatus();
+            this.updateTabPanel(this.currentTabElement);
             this.log(this.i18n.sync.error.replace("{message}", e.message));
             return { success: false, message: e.message };
         }

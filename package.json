@@ -1,0 +1,14 @@
+{
+  "name": "siyuan-notion-sync",
+  "version": "1.0.0",
+  "description": "Sync SiYuan notes to Notion",
+  "main": "index.js",
+  "author": "SiYuan User",
+  "license": "MIT",
+  "scripts": {
+    "build": "node build.js"
+  },
+  "devDependencies": {
+    "archiver": "^6.0.0"
+  }
+}

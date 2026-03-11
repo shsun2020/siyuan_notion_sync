@@ -3,7 +3,7 @@
     "version": "1.0.0",
     "author": "SiYuan User",
     "url": "https://github.com/siyuan-notion-sync/siyuan-notion-sync",
-    "icon": "siyuan_notion_sync.png",
+    "icon": "icon.png",
     "displayName": {
         "default": "SiYuan Notion Sync",
         "zh_CN": "SiYuan Notion 同步"

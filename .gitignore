@@ -3,6 +3,7 @@ node_modules/
 
 # Build output
 dist/
+release/
 
 # IDE
 .idea/
@@ -28,3 +29,5 @@ conf/config.json
 *.jpg
 *.jpeg
 *.png.bak
+*.ps1
+*.js.bak
