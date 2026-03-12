@@ -109,19 +109,55 @@ module.exports = class SiYuanNotionSyncPlugin extends Plugin {
             this.notion = new NotionClient(this.config.notionApiKey);
             this.ui = new PluginUI(this);
 
-            // 添加设置面板 Tab
-            this.addTab({
-                type: "siyuan-notion-sync-settings",
-                name: "siyuan-notion-sync",
+            // 添加设置界面 - 使用 addSetting 方法
+            this.addSetting({
                 i18n: "plugin.name",
-                // 创建面板的 DOM
-                obj: {
-                    display: (element) => {
-                        this.currentTabElement = element;
-                        element.innerHTML = this.getSettingsHTML();
-                        this.bindSettingsEvents(element);
+                name: "siyuan-notion-sync-settings",
+                type: "form",
+                items: [
+                    {
+                        name: "notionApiKey",
+                        type: "text",
+                        title: this.i18n.settings.apiKey,
+                        description: "Notion API Key (secret_xxx...)",
+                        defaultValue: ""
+                    },
+                    {
+                        name: "notionParentPageId",
+                        type: "text",
+                        title: this.i18n.settings.parentPage,
+                        description: "32位页面ID，留空则创建新页面",
+                        defaultValue: ""
+                    },
+                    {
+                        type: "button",
+                        title: this.i18n.settings.testConnection,
+                        label: this.i18n.settings.testConnection,
+                        callback: async (element) => {
+                            const apiKey = element.querySelector('input[name="notionApiKey"]').value.trim();
+                            const parentPage = element.querySelector('input[name="notionParentPageId"]').value.trim();
+                            const resultEl = element.querySelector("#connection-result") || document.createElement("div");
+                            resultEl.id = "connection-result";
+                            resultEl.style.marginTop = "8px";
+
+                            const tempNotion = new NotionClient(apiKey);
+                            const result = await tempNotion.testConnection(parentPage);
+
+                            if (result.success) {
+                                resultEl.textContent = "✓ Connection OK";
+                                resultEl.style.color = "green";
+                            } else {
+                                resultEl.textContent = "✗ " + result.message;
+                                resultEl.style.color = "red";
+                            }
+
+                            const buttonEl = element.querySelector('button[data-name="testConnection"]');
+                            if (buttonEl && !buttonEl.nextSibling) {
+                                buttonEl.parentNode.insertBefore(resultEl, buttonEl.nextSibling);
+                            }
+                        }
                     }
-                }
+                ]
             });
 
             // 添加命令 - 在命令面板中可用
@@ -154,15 +190,26 @@ module.exports = class SiYuanNotionSyncPlugin extends Plugin {
         }
     }
 
-    // 打开设置界面 - 思源笔记插件标准方法
-    // 当用户从 设置 → 插件 中点击插件时调用此方法
+    // 打开设置界面 - 当用户从 设置 → 插件 中点击插件时调用
+    // 返回一个 DOM 元素显示设置界面
     openSetting() {
         console.log("[SiYuan Notion Sync] openSetting called");
-        // 显示主面板（包含设置和同步功能）
-        if (this.ui) {
-            this.ui.showMainPanel();
-        } else {
-            console.error("[SiYuan Notion Sync] UI not initialized");
+        const element = document.createElement("div");
+        element.style.padding = "16px";
+        element.innerHTML = this.getSettingsHTML();
+        this.bindSettingsEvents(element);
+        this.currentTabElement = element;
+        return element;
+    }
+
+    // 设置变更时的回调 - 当用户在设置界面点击保存时调用
+    onSettingChange() {
+        console.log("[SiYuan Notion Sync] onSettingChange called");
+        // 重新加载配置
+        this.loadConfig();
+        // 更新 Notion 客户端
+        if (this.config.notionApiKey) {
+            this.notion = new NotionClient(this.config.notionApiKey);
         }
     }
 
