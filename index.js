@@ -154,6 +154,18 @@ module.exports = class SiYuanNotionSyncPlugin extends Plugin {
         }
     }
 
+    // 打开设置界面 - 思源笔记插件标准方法
+    // 当用户从 设置 → 插件 中点击插件时调用此方法
+    openSetting() {
+        console.log("[SiYuan Notion Sync] openSetting called");
+        // 显示主面板（包含设置和同步功能）
+        if (this.ui) {
+            this.ui.showMainPanel();
+        } else {
+            console.error("[SiYuan Notion Sync] UI not initialized");
+        }
+    }
+
     /**
      * 获取设置面板 HTML - 包含设置和同步功能
      */
