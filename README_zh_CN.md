@@ -215,4 +215,4 @@ MIT
 
 - GitHub: https://github.com/shsun2020/siyuan_notion_sync
 - Notion API 文档: https://developers.notion.com/
-- SiYuan 插件开发: https://ld246.com/guide/plugin/
+- SiYuan 插件开发: https://github.com/siyuan-note/petal

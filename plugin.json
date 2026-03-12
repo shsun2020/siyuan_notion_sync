@@ -1,9 +1,11 @@
 {
     "name": "siyuan-notion-sync",
-    "version": "1.0.0",
     "author": "shsun",
     "url": "https://github.com/shsun2020/siyuan_notion_sync",
-    "icon": "icon.png",
+    "version": "1.0.1",
+    "minAppVersion": "3.0.0",
+    "backends": ["all"],
+    "frontends": ["all"],
     "displayName": {
         "default": "SiYuan Notion Sync",
         "zh_CN": "SiYuan Notion 同步"
@@ -16,11 +18,5 @@
         "default": "README.md",
         "zh_CN": "README_zh_CN.md"
     },
-    "minAppVersion": "3.0.0",
-    "category": "tool",
-    "keywords": ["notion", "sync", "export", "integration"],
-    "backends": ["all"],
-    "frontends": ["all"],
-    "repository": "https://github.com/shsun2020/siyuan_notion_sync",
-    "bugs": "https://github.com/shsun2020/siyuan_notion_sync/issues"
+    "keywords": ["notion", "sync", "export", "integration"]
 }

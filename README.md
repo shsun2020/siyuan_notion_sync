@@ -155,4 +155,4 @@ MIT
 
 - GitHub Issues: https://github.com/shsun2020/siyuan_notion_sync/issues
 - Notion API Documentation: https://developers.notion.com/
-- SiYuan Plugin Development: https://ld246.com/guide/plugin/
+- SiYuan Plugin Development: https://github.com/siyuan-note/petal

@@ -34,8 +34,10 @@ const filesToInclude = [
     'index.css',
     'plugin.json',
     'icon.png',
+    'preview.png',
     'README.md',
-    'README_zh_CN.md'
+    'README_zh_CN.md',
+    'LICENSE'
 ];
 
 const dirsToInclude = [

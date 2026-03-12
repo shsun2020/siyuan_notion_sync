@@ -1,9 +1,9 @@
 {
   "name": "siyuan-notion-sync",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A SiYuan plugin that synchronizes notes from SiYuan to Notion",
   "main": "index.js",
-  "author": "SiYuan User",
+  "author": "shsun",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -25,6 +25,7 @@
     "dev": "node build.js --watch"
   },
   "devDependencies": {
-    "archiver": "^6.0.0"
+    "archiver": "^6.0.0",
+    "jimp": "^1.6.0"
   }
 }
